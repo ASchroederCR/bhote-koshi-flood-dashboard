@@ -146,6 +146,7 @@
   .legend{display:flex;align-items:center;gap:10px;font-family:var(--font-mono);font-size:10.5px;color:var(--muted);}
   .legend .swatch{width:14px;height:14px;border-radius:3px;display:inline-block;vertical-align:middle;margin-right:4px;}
   .legend-scale{width:120px;height:10px;border-radius:4px;background:linear-gradient(90deg,#a8392f,#e8dfc7 50%,#2f7a5c);}
+  .legend-scale.viridis{background:linear-gradient(90deg,#440154,#472d7b,#3b528b,#2c728e,#21908d,#27ad81,#5dc963,#aadc32,#fde725);}
   canvas{display:block;width:100%;touch-action:none;}
   .map-foot{display:flex;justify-content:space-between;gap:12px;padding:10px 16px;border-top:1px solid var(--line);font-size:11px;color:var(--muted);font-family:var(--font-mono);flex-wrap:wrap;}
 
@@ -269,6 +270,22 @@
       <div class="map-foot">
         <span id="popFootLeft">3,345 tiles &middot; 125 tiles ≤ –2σ &middot; 646 tiles ≥ +2σ</span>
         <span>Baseline 829,574 → Crisis 859,292 detected (+3.6% corridor-wide — masks sharp local divergence, see below)</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="baseline-map">
+    <div class="section-head"><h2>Baseline population magnitude</h2><span class="section-note">Meta POP · pre-flood expected population per tile</span></div>
+    <p class="lede">The z-score map above shows <em>how much each tile deviated</em> from normal — it says nothing about how many people were expected there in the first place. This pane plots that denominator: each tile's own 26&nbsp;Aug baseline population count, so a large anomaly can be weighed against whether it happened in a hamlet or a population center. Baseline population per tile is heavily right-skewed — single digits in the high mountains up to five figures in central Kathmandu (see the range below) — so color is mapped on a log scale, otherwise all but a handful of Kathmandu Valley tiles would look identical.</p>
+    <div class="panel map-panel">
+      <div class="map-toolbar">
+        <span class="map-title">Corridor baseline-population heat map</span>
+        <span class="legend"><span>sparse</span><span class="legend-scale viridis"></span><span>dense</span></span>
+      </div>
+      <canvas id="baselineCanvas" height="520" aria-label="Map of baseline population magnitude per tile across the Bhote Koshi to Narayani corridor, log-scaled Viridis palette"></canvas>
+      <div class="map-foot">
+        <span id="baselineFootLeft">3,345 tiles</span>
+        <span id="baselineFootRight">baseline population, log10 scale, Viridis</span>
       </div>
     </div>
   </section>
@@ -466,6 +483,20 @@
     return {r:(num>>16)&255, g:(num>>8)&255, b:num&255};
   }
 
+  const VIRIDIS_STOPS = ['#440154','#472d7b','#3b528b','#2c728e','#21908d','#27ad81','#5dc963','#aadc32','#fde725'].map(hexToRgb);
+  function viridis(t){
+    t = Math.max(0, Math.min(1, t));
+    const n = VIRIDIS_STOPS.length - 1;
+    const pos = t * n;
+    const i = Math.min(n - 1, Math.floor(pos));
+    const f = pos - i;
+    const c1 = VIRIDIS_STOPS[i], c2 = VIRIDIS_STOPS[i + 1];
+    const r = Math.round(c1.r + (c2.r - c1.r) * f);
+    const g = Math.round(c1.g + (c2.g - c1.g) * f);
+    const b = Math.round(c1.b + (c2.b - c1.b) * f);
+    return `rgb(${r},${g},${b})`;
+  }
+
   function setupCanvas(canvas){
     const dpr = window.devicePixelRatio || 1;
     const rect = canvas.getBoundingClientRect();
@@ -571,6 +602,42 @@
     `<b>${p.district}</b><br>z-score: ${p.z_score.toFixed(2)}<br>change: ${pct(p.percent_change)}<br>baseline ${fmt(p.n_baseline)} → crisis ${fmt(p.n_crisis)}`
   );
 
+  // ---------- baseline population magnitude canvas (Viridis, log scale) ----------
+  const baselinePoints = DATA.pop_points.filter(p => p.n_baseline > 0);
+  const baselineVals = baselinePoints.map(p => Math.log10(p.n_baseline));
+  const baselineLogMin = Math.min(...baselineVals);
+  const baselineLogMax = Math.max(...baselineVals);
+  function baselineT(v){ return (Math.log10(v) - baselineLogMin) / (baselineLogMax - baselineLogMin); }
+
+  const baselineCanvas = document.getElementById('baselineCanvas');
+  function renderBaseline(){
+    const {ctx,w,h} = setupCanvas(baselineCanvas);
+    drawFrame(ctx,w,h);
+    baselinePoints.forEach(p=>{
+      const [x,y] = project(p.latitude, p.longitude, w, h);
+      const t = baselineT(p.n_baseline);
+      const r = 1.6 + t*2.4;
+      ctx.beginPath();
+      ctx.arc(x,y,r,0,Math.PI*2);
+      ctx.fillStyle = viridis(t);
+      ctx.globalAlpha = 0.88;
+      ctx.fill();
+      ctx.globalAlpha = 1;
+    });
+  }
+  renderBaseline();
+  attachHover(baselineCanvas, baselinePoints, p=>p.latitude, p=>p.longitude, p=>
+    `<b>${p.district}</b><br>baseline population: ${fmt(p.n_baseline)}<br>(log₁₀ ${Math.log10(p.n_baseline).toFixed(2)} of ${baselineLogMin.toFixed(1)}–${baselineLogMax.toFixed(1)} range)`
+  );
+  (function(){
+    const sorted = baselinePoints.map(p=>p.n_baseline).sort((a,b)=>a-b);
+    const median = sorted[Math.floor(sorted.length/2)];
+    const footLeft = document.getElementById('baselineFootLeft');
+    const footRight = document.getElementById('baselineFootRight');
+    if(footLeft) footLeft.textContent = `${fmt(baselinePoints.length)} tiles with a positive baseline`;
+    if(footRight) footRight.textContent = `min ${fmt(sorted[0])} · median ${fmt(median)} · max ${fmt(sorted[sorted.length-1])} (log₁₀ scale, Viridis)`;
+  })();
+
   // ---------- NET canvas ----------
   const netCanvas = document.getElementById('netCanvas');
   function renderNet(){
@@ -621,7 +688,7 @@
 
   // ---------- redraw on theme change / resize ----------
   const mq = window.matchMedia('(prefers-color-scheme: dark)');
-  function redrawAll(){ renderPop(); renderNet(); renderMov(); }
+  function redrawAll(){ renderPop(); renderBaseline(); renderNet(); renderMov(); }
   mq.addEventListener ? mq.addEventListener('change', redrawAll) : mq.addListener(redrawAll);
   let resizeT;
   window.addEventListener('resize', ()=>{ clearTimeout(resizeT); resizeT=setTimeout(redrawAll,150); });
