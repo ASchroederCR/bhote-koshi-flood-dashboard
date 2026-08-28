@@ -234,11 +234,11 @@
       <div class="header-text">
         <div class="eyebrow"><span class="dot"></span> RAPID SITUATION ASSESSMENT &middot; NEPAL &middot; META DATA THROUGH 28 AUG 04:45 NPT</div>
         <h1>Bhote&nbsp;Koshi Flood — Population &amp; Connectivity Assessment</h1>
-        <p class="subhead">A two-day cross-read of Meta Data for Good crisis signals (population, network, movement) against the Copernicus EMSR927 rapid mapping activation and the ReliefWeb/DFS situation overview, for the 26 August 2026 glacial-lake-outburst flood on the Bhote&nbsp;Koshi–Trishuli–Narayani river system — now with a second day of data to test whether the corridor is stabilizing or still deteriorating.</p>
+        <p class="subhead">A two-day cross-read of Meta Data for Good crisis signals (population, network, movement) against the Copernicus EMSR927 rapid mapping activation and three ground-truth situation reports, for the 26 August 2026 glacial-lake-outburst flood on the Bhote&nbsp;Koshi–Trishuli–Narayani river system — now with a second day of data, and an updated toll, to test whether the corridor is stabilizing or still deteriorating.</p>
         <div class="badges">
           <span class="badge">Meta POP · NET · MOV, 26–27 Aug 2026</span>
           <span class="badge">Copernicus EMS EMSR927</span>
-          <span class="badge">ReliefWeb / Data Friendly Space, 27 Aug 2026</span>
+          <span class="badge">ReliefWeb / DFS, 27 Aug &middot; UN RCO/OCHA Flash Update #3, 28 Aug &middot; PDC Early Analysis, 26 Aug</span>
           <span class="badge">Analyst: situational triage, not verified ground truth</span>
         </div>
       </div>
@@ -255,18 +255,34 @@
       <div class="event-item"><div class="t">10:16 UTC</div><div class="d">Copernicus EMS activates On-Demand Rapid Mapping (EMSR927)</div></div>
       <div class="event-item"><div class="t">Daytime 26 Aug</div><div class="d">Surge passes Betrawati &amp; Trishuli Bazar (Nuwakot), Galchhi &amp; Dhunge Bazaar (Dhading), Muglin, into the Narayani</div></div>
       <div class="event-item"><div class="t">Through 27 Aug</div><div class="d">Deaths recorded as far downstream as Chitwan, Gorkha, Tanahu, Nawalparasi East</div></div>
-      <div class="event-item"><div class="t">08:15 NPT, 27 Aug</div><div class="d">Nepal Police: 165 confirmed dead, 73 injured, 826 missing — all figures still provisional</div></div>
+      <div class="event-item"><div class="t">08:15 NPT, 27 Aug</div><div class="d">Nepal Police via ReliefWeb/DFS: 165 confirmed dead, 73 injured, 826 missing — all figures still provisional</div></div>
       <div class="event-item"><div class="t">12:45 NPT, 26 Aug</div><div class="d">First Meta snapshot in this dataset — already ~3.8h after onset. No Meta reading in this export predates the flood.</div></div>
+      <div class="event-item"><div class="t">28 Aug</div><div class="d">UN RCO/OCHA Flash Update #3: toll revised sharply upward to 539 dead, 977 missing, as search reaches previously cut-off areas</div></div>
     </div>
+
+    <div class="section-head" style="margin-top:28px;"><h2 style="font-size:16px;">Three reports, one worsening picture</h2><span class="section-note">Ground-truth casualty figures by source and cutoff — not a single number</span></div>
+    <p class="lede" style="margin-bottom:14px;">These three reports don't agree, and shouldn't be read as if they do: PDC's figure is a same-day modeled estimate, ReliefWeb/DFS and OCHA are successive government-sourced counts a day apart. Read together, the trend is what matters: the confirmed toll roughly tripled between the first and third report as search and rescue reached communities that were cut off on day one.</p>
+    <div class="table-scroll panel">
+      <table>
+        <thead><tr><th>Source</th><th>As of</th><th class="num">Dead</th><th class="num">Missing</th><th class="num">Injured</th><th class="num">Displaced</th></tr></thead>
+        <tbody>
+          <tr><td class="name">PDC Early Analysis (modeled estimate)</td><td class="name">26 Aug</td><td class="num">144</td><td class="num">—</td><td class="num">63</td><td class="num">—</td></tr>
+          <tr><td class="name">ReliefWeb / Data Friendly Space</td><td class="name">27 Aug, 08:15</td><td class="num">165</td><td class="num">826 <span style="color:var(--muted);">(+558 Tibet side)</span></td><td class="num">73</td><td class="num">not yet published</td></tr>
+          <tr><td class="name">UN RCO / OCHA Flash Update #3</td><td class="name">28 Aug</td><td class="num">539</td><td class="num">977</td><td class="num">73</td><td class="num">1,080+ (Nuwakot only)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size:12px;color:var(--muted);margin:10px 0 0;">PDC's exposure modeling and the government-sourced counts are not directly comparable methodologies — one estimates who was in harm's way from hazard and baseline population data, the other counts confirmed cases as search and rescue proceeds. Displacement figures cover only the five tracked sites in Nuwakot; people displaced from Rasuwa, Dhading and Gorkha are explicitly not yet located as of the 28 Aug report.</p>
   </section>
 
   <section id="kpis">
-    <div class="section-head"><h2>Key figures</h2><span class="section-note">Ground-truth (ReliefWeb/DFS) + mobile-signal proxies (Meta)</span></div>
+    <div class="section-head"><h2>Key figures</h2><span class="section-note">Latest ground-truth (OCHA/PDC/ReliefWeb) + mobile-signal proxies (Meta)</span></div>
     <div class="kpi-grid">
-      <div class="kpi critical"><div class="label">Confirmed dead</div><div class="value">165</div><div class="sub">73 injured &middot; Nepal, as of 27 Aug 08:15</div></div>
-      <div class="kpi amber"><div class="label">Missing, Nepal</div><div class="value">826</div><div class="sub">+558 missing on Tibet side (CCTV)</div></div>
-      <div class="kpi critical"><div class="label">Access road destroyed</div><div class="value">42<small>km</small></div><div class="sub">Betrawati–Rasuwagadhi, multiple bridge losses</div></div>
-      <div class="kpi amber"><div class="label">Hydropower affected</div><div class="value">748<small>MW</small></div><div class="sub">14 plants incl. Rasuwagadhi, Chilime, Trishuli</div></div>
+      <div class="kpi critical"><div class="label">Confirmed dead</div><div class="value">539</div><div class="sub">73 injured &middot; up from 165 on 27 Aug &middot; OCHA, as of 28 Aug</div></div>
+      <div class="kpi amber"><div class="label">Missing, Nepal</div><div class="value">977</div><div class="sub">incl. 644 foreign/overseas &middot; +558 more on Tibet side (CCTV, 27 Aug)</div></div>
+      <div class="kpi amber"><div class="label">People displaced</div><div class="value">1,080<small>+</small></div><div class="sub">5 tracked sites, Nuwakot only &middot; other districts not yet located</div></div>
+      <div class="kpi critical"><div class="label">Transport corridors damaged</div><div class="value">~45<small>km</small></div><div class="sub">80 bridges swept away (PDC) &middot; OCHA, 28 Aug</div></div>
+      <div class="kpi amber"><div class="label">Hydropower affected</div><div class="value">748<small>MW</small></div><div class="sub">14 plants (ReliefWeb) &middot; PDC's same-day model: 431 MW</div></div>
       <div class="kpi critical" id="kpi-pop-rasuwa"><div class="label">Rasuwa pop. signal, Day 1 → Day 2</div><div class="value">–63%<small>→ –34%</small></div><div class="sub">Day-pooled; only 12→23 of ~73 tiles had a complete reading</div></div>
       <div class="kpi critical" id="kpi-net-lost"><div class="label">Rasuwa network tiles lost</div><div class="value">37.5%</div><div class="sub">27 of 72 covered tiles dark, 26→27 Aug</div></div>
       <div class="kpi amber" id="kpi-dhading-trend"><div class="label">Dhading pop. trend</div><div class="value">worse</div><div class="sub">+0.1% (Day 1) → –4.6% (Day 2), tipped negative</div></div>
@@ -404,6 +420,11 @@
         <h3>EMSR927's four AOIs line up with the Meta data</h3>
         <p>Syaprubesi and Timure sit inside the Rasuwa zone that just lost over a third of its cell coverage (rapid mapping still "ongoing," 0–1 products delivered so far). Bharatpur (Chitwan) sits inside the POP surge zone — the satellite damage-assessment footprint and the mobile-signal inbound anomaly point at the same place, though that anomaly is already fading by Day 2.</p>
       </div>
+      <div class="panel finding critical-find">
+        <span class="tag">Don't read signal recovery as situational recovery</span>
+        <h3>Rasuwa's mobile signal improved while the confirmed death toll nearly tripled</h3>
+        <p>Meta's Rasuwa population deficit eased from –63% to –34% across the same roughly 24-hour window in which OCHA's confirmed toll jumped from 165 to 539 dead. Both can be true at once: search and rescue reaching cut-off areas restores some phones to the network <em>and</em> confirms deaths that were previously unknown. A recovering mobile-signal proxy is not evidence that the human situation is improving.</p>
+      </div>
     </div>
   </section>
 
@@ -428,7 +449,7 @@
         <li><b>Every percent-change figure on this page sums only tiles with a paired baseline <em>and</em> crisis reading.</b> An earlier build of this dashboard summed baseline unconditionally while treating a missing crisis value as zero, which mismatched the denominator against a partial numerator and overstated every deficit — most severely in Rasuwa, where as few as 3–23 of its 73 tiles have a complete reading at any given hour. That bug is fixed; the tradeoff is that Rasuwa's remaining figures now rest on very small, noisy samples, so treat them as indicative, not precise. NET's tile-loss count (37.5%) doesn't depend on this baseline/crisis pairing and is the more reliable Rasuwa figure on this page.</li>
         <li><b>NET is two snapshots 24 hours apart, not continuous monitoring — and both are post-event.</b> The earlier reading is ~3.8 hours after the ~09:00 NPT onset; the later one is ~27.8 hours after it. The tile losses shown are <em>continued</em> degradation over that window, not a before/after of the initial impact. A tower that failed and was restored within the window, or failed after the later snapshot was taken, wouldn't show up as "lost" here.</li>
         <li><b>Zone boundaries are rectangular bounding boxes</b> drawn for rapid triage, not official administrative or CBS boundaries. Tiles near a boundary may be attributed to the wrong district.</li>
-        <li><b>All ReliefWeb/DFS figures are explicitly provisional</b> and were still rising through the day of writing. The source report itself flags a consolidated displacement/needs total as an unpublished priority information gap.</li>
+        <li><b>The three ground-truth reports don't agree, and that's expected, not an error.</b> PDC's figures are a same-day modeled exposure estimate (26 Aug); ReliefWeb/DFS (27 Aug) and OCHA's Flash Update #3 (28 Aug) are successive government-sourced counts. Every count was explicitly labeled provisional by its own source and rose from one report to the next as search and rescue reached previously cut-off communities — treat the trend as the signal, not any single headline number.</li>
         <li>This page is a same-day analyst triage for situational awareness. It is not a substitute for the official Copernicus EMSR927 delineation/grading products (activation ongoing) or verified government damage assessments.</li>
       </ul>
     </details>
@@ -438,10 +459,12 @@
     <div class="src-links">
       <span>Sources</span>
       <a href="https://reliefweb.int/report/nepal/nepal-flash-floods-rapid-situation-overview-27-august-2026" target="_blank" rel="noopener">ReliefWeb / Data Friendly Space — Nepal Flash Floods: Rapid Situation Overview (27 Aug 2026)</a>
+      <a href="https://nepal.un.org/en" target="_blank" rel="noopener">UN Resident Coordinator's Office Nepal / OCHA — Nepal Rasuwa Flood Flash Update #3 (28 Aug 2026)</a>
+      <a href="https://www.pdc.org/" target="_blank" rel="noopener">Pacific Disaster Center — Nepal Catastrophic Flash Flood: Early Analysis, Rasuwa-Trishuli (26 Aug 2026)</a>
       <a href="https://storymaps.arcgis.com/stories/f76baefadfa74d6d9a18265875f48870" target="_blank" rel="noopener">Copernicus EMS — EMSR927 Situational Reporting Story Map</a>
       <span>Meta Data for Good — POP, NET, MOV crisis-response exports, 26–27 Aug 2026</span>
     </div>
-    <div>Meta data refreshed 28 Aug 2026, 04:45 NPT (corrected from Pacific Time) &middot; ReliefWeb situation report as of 27 Aug 08:15 NPT &middot; figures provisional &middot; not for operational decision-making without ground verification</div>
+    <div>Meta data refreshed 28 Aug 2026, 04:45 NPT (corrected from Pacific Time) &middot; latest ground-truth toll per OCHA, 28 Aug &middot; figures provisional and inconsistent across sources &middot; not for operational decision-making without ground verification</div>
   </footer>
 
 </div>
