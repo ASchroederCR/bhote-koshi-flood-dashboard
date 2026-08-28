@@ -147,7 +147,7 @@
   .legend .swatch{width:14px;height:14px;border-radius:3px;display:inline-block;vertical-align:middle;margin-right:4px;}
   .legend-scale{width:120px;height:10px;border-radius:4px;background:linear-gradient(90deg,#a8392f,#e8dfc7 50%,#2f7a5c);}
   .legend-scale.viridis{background:linear-gradient(90deg,#440154,#472d7b,#3b528b,#2c728e,#21908d,#27ad81,#5dc963,#aadc32,#fde725);}
-  canvas{display:block;width:100%;touch-action:none;}
+  canvas{display:block;width:100%;touch-action:none;aspect-ratio:1.73;min-height:200px;max-height:640px;}
   .map-foot{display:flex;justify-content:space-between;gap:12px;padding:10px 16px;border-top:1px solid var(--line);font-size:11px;color:var(--muted);font-family:var(--font-mono);flex-wrap:wrap;}
 
   .tooltip{
@@ -266,7 +266,7 @@
         <span class="map-title">Corridor population-variance heat map</span>
         <span class="legend"><span>deficit</span><span class="legend-scale"></span><span>surge</span></span>
       </div>
-      <canvas id="popCanvas" height="520" aria-label="Map of population variance by tile across the Bhote Koshi to Narayani corridor"></canvas>
+      <canvas id="popCanvas" aria-label="Map of population variance by tile across the Bhote Koshi to Narayani corridor"></canvas>
       <div class="map-foot">
         <span id="popFootLeft">3,345 tiles &middot; 125 tiles ≤ –2σ &middot; 646 tiles ≥ +2σ</span>
         <span>Baseline 829,574 → Crisis 859,292 detected (+3.6% corridor-wide — masks sharp local divergence, see below)</span>
@@ -282,7 +282,7 @@
         <span class="map-title">Corridor baseline-population heat map</span>
         <span class="legend"><span>sparse</span><span class="legend-scale viridis"></span><span>dense</span></span>
       </div>
-      <canvas id="baselineCanvas" height="520" aria-label="Map of baseline population magnitude per tile across the Bhote Koshi to Narayani corridor, log-scaled Viridis palette"></canvas>
+      <canvas id="baselineCanvas" aria-label="Map of baseline population magnitude per tile across the Bhote Koshi to Narayani corridor, log-scaled Viridis palette"></canvas>
       <div class="map-foot">
         <span id="baselineFootLeft">3,345 tiles</span>
         <span id="baselineFootRight">baseline population, log10 scale, Viridis</span>
@@ -310,7 +310,7 @@
     <div class="grid-2">
       <div class="panel map-panel">
         <div class="map-toolbar"><span class="map-title">Covered-tile density (light dots) under the population layer</span></div>
-        <canvas id="netCanvas" height="420" aria-label="Map of network coverage tile density across the corridor"></canvas>
+        <canvas id="netCanvas" aria-label="Map of network coverage tile density across the corridor"></canvas>
         <div class="map-foot"><span>7,949 covered tiles logged corridor-wide</span><span>Sparser dot field = thinner baseline cellular footprint</span></div>
       </div>
       <div class="panel panel-pad">
@@ -329,7 +329,7 @@
         <span class="map-title">Highest-anomaly movement corridors</span>
         <span class="legend"><span>outbound</span><span class="legend-scale"></span><span>inbound</span></span>
       </div>
-      <canvas id="movCanvas" height="480" aria-label="Map of anomalous movement flows across the corridor"></canvas>
+      <canvas id="movCanvas" aria-label="Map of anomalous movement flows across the corridor"></canvas>
       <div class="map-foot"><span id="movFootLeft">2,942 flows plotted (length &gt; 1 km)</span><span>Kathmandu↔Nuwakot: both directions +5.8% to +8.9% above baseline</span></div>
     </div>
     <div class="table-scroll panel" style="margin-top:16px;">
@@ -445,6 +445,10 @@
     const yNorm = (lat2y(lat) - MERC_Y0) / (MERC_Y1 - MERC_Y0);
     return [xNorm*w, yNorm*h];
   }
+  // true aspect ratio of the cropped basemap/data bbox — every map canvas is sized to this
+  // ratio so it scales with viewport width instead of stretching into a fixed pixel height.
+  const BASEMAP_ASPECT = (MERC_X1 - MERC_X0) / (MERC_Y1 - MERC_Y0);
+  const MAP_MIN_H = 200, MAP_MAX_H = 640;
 
   const basemapImg = new Image();
   let basemapReady = false;
@@ -499,11 +503,10 @@
 
   function setupCanvas(canvas){
     const dpr = window.devicePixelRatio || 1;
-    const rect = canvas.getBoundingClientRect();
-    const w = rect.width || canvas.parentElement.clientWidth;
-    const h = parseInt(canvas.getAttribute('height'),10);
-    canvas.width = w*dpr; canvas.height = h*dpr;
+    const w = canvas.getBoundingClientRect().width || canvas.parentElement.clientWidth;
+    const h = Math.max(MAP_MIN_H, Math.min(MAP_MAX_H, w / BASEMAP_ASPECT));
     canvas.style.height = h+'px';
+    canvas.width = Math.round(w*dpr); canvas.height = Math.round(h*dpr);
     const ctx = canvas.getContext('2d');
     ctx.setTransform(dpr,0,0,dpr,0,0);
     return {ctx, w, h};
@@ -691,7 +694,20 @@
   function redrawAll(){ renderPop(); renderBaseline(); renderNet(); renderMov(); }
   mq.addEventListener ? mq.addEventListener('change', redrawAll) : mq.addListener(redrawAll);
   let resizeT;
-  window.addEventListener('resize', ()=>{ clearTimeout(resizeT); resizeT=setTimeout(redrawAll,150); });
+  function scheduleRedraw(){ clearTimeout(resizeT); resizeT=setTimeout(redrawAll,120); }
+  window.addEventListener('resize', scheduleRedraw);
+  window.addEventListener('orientationchange', scheduleRedraw);
+  // window 'resize' only fires for the viewport itself — it misses reflows from font loading,
+  // the grid-2 breakpoint collapsing, or a host that resizes our container without resizing
+  // the window (e.g. an embedded/preview pane). Watch the actual layout box instead.
+  if(window.ResizeObserver){
+    let lastWrapW = null;
+    new ResizeObserver((entries)=>{
+      const w = Math.round(entries[0].contentRect.width);
+      if(w !== lastWrapW){ lastWrapW = w; scheduleRedraw(); }
+    }).observe(document.querySelector('.wrap'));
+  }
+  if(document.fonts && document.fonts.ready){ document.fonts.ready.then(scheduleRedraw); }
 
   // ---------- POP district bars ----------
   (function(){
