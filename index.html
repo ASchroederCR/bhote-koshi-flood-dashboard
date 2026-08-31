@@ -385,7 +385,7 @@
     </div>
     <div class="table-scroll panel" style="margin-top:16px;">
       <table>
-        <thead><tr><th>Batch</th><th>Origin zone</th><th>Destination zone</th><th class="num">Distance</th><th class="num">Baseline</th><th class="num">Crisis</th><th class="num">% change</th><th class="num">Max z</th></tr></thead>
+        <thead><tr><th>Date (NPT)</th><th>Origin zone</th><th>Destination zone</th><th class="num">Distance</th><th class="num">Baseline</th><th class="num">Crisis</th><th class="num">% change</th><th class="num">Max z</th></tr></thead>
         <tbody id="movTable"></tbody>
       </table>
     </div>
@@ -1031,8 +1031,17 @@
   // ---------- MOV table: all batches, grouped by corridor pair ----------
   (function(){
     const el = document.getElementById('movTable');
-    const batchIndex = {};
-    DATA.mov_days.forEach((d,i)=>{ batchIndex[d] = i+1; });
+    // a MOV batch pools two NPT timestamps (e.g. 20:45 one day, 04:45 the next), so it
+    // spans a real date range rather than a single day — show that range, not "Batch N".
+    function batchDateLabel(day){
+      const range = DATA.pop_batch_ranges_npt[day];
+      if(!range) return day;
+      const d0 = Number(range[0].slice(8,10)), m0 = Number(range[0].slice(5,7));
+      const d1 = Number(range[1].slice(8,10)), m1 = Number(range[1].slice(5,7));
+      if(d0===d1 && m0===m1) return `${d0} ${MONTHS[m0-1]}`;
+      if(m0===m1) return `${d0}–${d1} ${MONTHS[m0-1]}`;
+      return `${d0} ${MONTHS[m0-1]}–${d1} ${MONTHS[m1-1]}`;
+    }
     const pairs = {};
     DATA.mov_pair_day.forEach(r=>{
       const key = r.start_district+'||'+r.end_district;
@@ -1045,7 +1054,7 @@
       return {rows, maxAbsZ};
     }).sort((a,b)=>b.maxAbsZ-a.maxAbsZ);
     el.innerHTML = groups.flatMap(g=>g.rows).map(r=>`<tr>
-      <td class="name">Batch ${batchIndex[r.day]}</td>
+      <td class="name">${batchDateLabel(r.day)}</td>
       <td class="name">${r.start_district.replace(' (source zone)','')}</td>
       <td class="name">${r.end_district.replace(' (source zone)','')}</td>
       <td class="num">${r.mean_length_km.toFixed(1)} km</td>
@@ -1055,7 +1064,8 @@
       <td class="num">${r.max_z.toFixed(2)}</td>
     </tr>`).join('');
     const footLeft = document.getElementById('movFootLeft');
-    if(footLeft) footLeft.textContent = `${fmt(DATA.mov_flows.length)} flows plotted (length > 1 km, Batch ${DATA.mov_days.length} / latest)`;
+    const latestLabel = batchDateLabel(DATA.mov_days[DATA.mov_days.length-1]);
+    if(footLeft) footLeft.textContent = `${fmt(DATA.mov_flows.length)} flows plotted (length > 1 km, ${latestLabel} / latest)`;
   })();
 
   // ---------- Zone comparison table ----------
