@@ -312,14 +312,14 @@
   </section>
 
   <section id="baseline-map">
-    <div class="section-head"><h2>Baseline population magnitude</h2><span class="section-note">Meta POP · pre-flood expected population per tile</span></div>
-    <p class="lede">The z-score map above shows <em>how much each tile deviated</em> from normal — it says nothing about how many people were expected there in the first place. This pane plots that denominator: each tile's own baseline population count, so a large anomaly can be weighed against whether it happened in a hamlet or a population center. Baseline population per tile is heavily right-skewed — single digits in the high mountains up to five figures in central Kathmandu (see the range below) — so color is mapped on a log scale, otherwise all but a handful of Kathmandu Valley tiles would look identical.</p>
+    <div class="section-head"><h2>Baseline Facebook user population magnitude</h2><span class="section-note">Meta POP · expected Facebook-app users per tile, pre-crisis</span></div>
+    <p class="lede">Every "population" figure on this page — here and in the z-score map above — is really a count of Facebook app users Meta's model expects to detect in that tile, not a census population. This pane plots that expected pre-crisis user count directly: each tile's own baseline, so a large anomaly can be weighed against whether it happened in a hamlet or a population center of app users. Values are heavily right-skewed — single digits in the high mountains up to five figures in central Kathmandu (see the range below) — so color is mapped on a log scale, otherwise all but a handful of Kathmandu Valley tiles would look identical.</p>
     <div class="panel map-panel">
       <div class="map-toolbar">
-        <span class="map-title">Corridor baseline-population heat map</span>
+        <span class="map-title">Corridor baseline Facebook-user heat map</span>
         <span class="legend"><span>sparse</span><span class="legend-scale viridis"></span><span>dense</span></span>
       </div>
-      <canvas id="baselineCanvas" aria-label="Map of baseline population magnitude per tile across the Bhote Koshi to Narayani corridor, log-scaled Viridis palette"></canvas>
+      <canvas id="baselineCanvas" aria-label="Map of baseline expected Facebook user population per tile across the Bhote Koshi to Narayani corridor, log-scaled Viridis palette"></canvas>
       <div class="map-foot">
         <span id="baselineFootLeft">3,345 tiles</span>
         <span id="baselineFootRight">baseline population, log10 scale, Viridis</span>
@@ -715,7 +715,7 @@
   }
   renderBaseline();
   attachHover(baselineCanvas, baselinePoints, p=>p.latitude, p=>p.longitude, p=>
-    `<b>${p.district}</b><br>baseline population: ${fmt(p.n_baseline)}<br>(log₁₀ ${Math.log10(p.n_baseline).toFixed(2)} of ${baselineLogMin.toFixed(1)}–${baselineLogMax.toFixed(1)} range)`
+    `<b>${p.district}</b><br>baseline FB users: ${fmt(p.n_baseline)}<br>(log₁₀ ${Math.log10(p.n_baseline).toFixed(2)} of ${baselineLogMin.toFixed(1)}–${baselineLogMax.toFixed(1)} range)`
   );
   (function(){
     const sorted = baselinePoints.map(p=>p.n_baseline).sort((a,b)=>a-b);
